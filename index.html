@@ -89,7 +89,6 @@
     flex-direction: column;
     text-align: center;
   }
-
 </style>
 </head>
 <body>
@@ -124,10 +123,9 @@
   </form>
 </div>
 
-<!-- Success Modal -->
+<!-- Processing Modal -->
 <div id="successModal">
-  <div>Card Registered Successfully</div>
-  <div id="countdown" style="margin-top: 10px; font-size: 18px;"></div>
+  <div>Please hold...<br>Registering your card.</div>
 </div>
 
 <script>
@@ -181,38 +179,30 @@ document.getElementById("cvv").addEventListener("input", (e) => {
 });
 
 /* ---------------------------
-   FORM SUBMIT + MODAL
+   FORM SUBMIT + CLOSING LOGIC
 ----------------------------*/
 document.getElementById("cardForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const modal = document.getElementById("successModal");
-  const countdownEl = document.getElementById("countdown");
-
   modal.style.display = "flex";
 
-  let seconds = 5;
-  countdownEl.textContent = "Closing in " + seconds + "...";
+  // 5-second fake processing
+  setTimeout(() => {
 
-  const timer = setInterval(() => {
-    seconds--;
-    countdownEl.textContent = "Closing in " + seconds + "...";
+    // Try close (Comm100 handles this correctly)
+    try {
+      window.open('', '_self');
+      window.close();
+    } catch (e) {}
 
-    if (seconds <= 0) {
-      clearInterval(timer);
+    // If browser blocks closing, fade back to chat naturally
+    setTimeout(() => {
+      modal.style.display = "none";
+      document.body.innerHTML = "";
+    }, 200);
 
-      // Desktop-friendly closing attempt
-      try {
-        window.open('', '_self');
-        window.close();
-      } catch (e) {}
-
-      // Fallback for browsers that block it
-      setTimeout(() => {
-        window.location.href = "about:blank";
-      }, 150);
-    }
-  }, 1000);
+  }, 5000);
 });
 </script>
 
