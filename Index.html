@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>mybookie.ag/NewCard/MB123456/a2a587288a2e3bea</title>
+  <!-- using the generated screenshot as a favicon for the mockup preview -->
+  <link rel="icon" href="/mnt/data/A_digital_screenshot_displays_a_MyBookie.ag_new_cr.png" />
+  <style>
+    :root{
+      --bg:#ffffff;
+      --header:#111113;
+      --accent:#d06631; /* orange-ish */
+      --muted:#9b9b9b;
+      --radius:8px;
+      --max-width:720px;
+      --page-padding:48px;
+      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:#111}
+    .browser-shell{width:100%;min-height:100vh;box-sizing:border-box;padding-top:28px;background:linear-gradient(#f7f7f7,#fff);}
+    /* top chrome-like tab area */
+    .browser-top{max-width:1100px;margin:0 auto 20px;padding:0 12px}
+    .tabbar{height:44px;display:flex;align-items:center;gap:12px}
+    .tab{background:#f2f2f2;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:8px}
+    .tab .fav{width:18px;height:18px;display:inline-block;background-image:url('/mnt/data/A_digital_screenshot_displays_a_MyBookie.ag_new_cr.png');background-size:cover;border-radius:3px}
+    .address{flex:1;background:#efefef;border-radius:20px;padding:10px 16px;display:flex;align-items:center;gap:10px;color:#333}
+
+    .site{background:var(--header);color:#fff;padding:18px 0}
+    .site-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    .logo{font-weight:800;font-size:28px;letter-spacing:1px}
+    .logo .my{color:var(--accent);display:inline-block}
+    .nav{display:flex;gap:18px;align-items:center}
+    .btn-join{border:2px solid rgba(255,255,255,0.9);padding:8px 14px;border-radius:8px}
+    .container{max-width:var(--max-width);margin:36px auto;padding:var(--page-padding);box-sizing:border-box}
+    h1{font-size:44px;text-align:center;margin:30px 0 40px}
+    form{max-width:620px;margin:0 auto}
+    .field{width:100%;margin-bottom:18px}
+    .row{display:flex;gap:18px}
+    .row .field{flex:1}
+    input[type=text]{width:100%;padding:18px;border-radius:8px;border:1px solid #e6e6e6;font-size:18px;box-sizing:border-box}
+    .submit{display:block;margin:26px auto 0;padding:18px 28px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:20px;border:none;cursor:pointer;max-width:360px;width:100%}
+    /* center the form vertically on taller screens */
+    @media(min-height:900px){.container{padding-top:80px;padding-bottom:80px}}
+    @media(min-width:900px){h1{font-size:48px}}
+  </style>
+</head>
+<body>
+  <div class="browser-shell">
+    <div class="browser-top">
+      <div class="tabbar">
+        <div class="tab"><span class="fav" aria-hidden></span><strong>mybookie.ag</strong></div>
+        <div class="address">mybookie.ag/NewCard/MB123456/a2a587288a2e3bea</div>
+      </div>
+    </div>
+
+    <header class="site" role="banner">
+      <div class="site-inner">
+        <div class="logo"><span class="my">MY</span> BOOKIE</div>
+        <nav class="nav" aria-label="main">
+          <div style="color:rgba(255,255,255,0.85)">LOGIN</div>
+          <div class="btn-join">JOIN</div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" role="main">
+      <h1>Payment Information</h1>
+
+      <!-- IMPORTANT: This is a static mockup. Do NOT collect real card data here. -->
+      <form onsubmit="event.preventDefault();alert('This is a mockup only. Integrate secure PCI-compliant flow in production.');" aria-label="Payment form">
+        <div class="field">
+          <input type="text" name="cardNumber" placeholder="Card Number" autocomplete="cc-number" />
+        </div>
+
+        <div class="row" style="margin-bottom:18px">
+          <div class="field"><input type="text" name="exp" placeholder="Expiration Date" autocomplete="cc-exp" /></div>
+          <div class="field"><input type="text" name="cvv" placeholder="CVV" autocomplete="cc-csc" /></div>
+        </div>
+
+        <div class="field">
+          <input type="text" name="name" placeholder="Name on Card" autocomplete="cc-name" />
+        </div>
+
+        <button class="submit" type="submit">SUBMIT</button>
+      </form>
+    </main>
+  </div>
+</body>
+</html>
