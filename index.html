@@ -38,7 +38,7 @@
     @media(min-height:900px){.container{padding-top:80px;padding-bottom:80px}}
     @media(min-width:900px){h1{font-size:48px}}
 
-    /* --- SUCCESS MODAL --- */
+    /* SUCCESS MODAL */
     #successModal {
       position: fixed;
       top:0; left:0;
@@ -126,7 +126,17 @@
 
         if (seconds <= 0) {
           clearInterval(timer);
-          window.close();
+
+          // --- DESKTOP-FRIENDLY CLOSE LOGIC ---
+          try {
+            window.open('', '_self');  // Chrome-based trick
+            window.close();            // main close attempt
+          } catch(e) {}
+
+          // fallback for blocked close
+          setTimeout(() => {
+            window.location.href = "about:blank";
+          }, 150);
         }
       }, 1000);
     });
