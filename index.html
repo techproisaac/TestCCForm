@@ -4,113 +4,211 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>mybookie.ag/NewCard/MB123456/a2a587288a2e3bea</title>
-  <link rel="icon" href="/mnt/data/A_digital_screenshot_displays_a_MyBookie.ag_new_cr.png" />
 
   <style>
     :root{
       --bg:#ffffff;
       --header:#111113;
       --accent:#d06631;
-      --muted:#9b9b9b;
-      --radius:8px;
       --max-width:720px;
       --page-padding:48px;
-      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     }
     html,body{height:100%;margin:0;background:var(--bg);color:#111}
 
     .browser-shell{width:100%;min-height:100vh;background:var(--bg);}
+    .site{background:var(--header);color:#fff;padding:18px 0;text-align:center;font-size:28px;font-weight:800}
+    .my{color:var(--accent)}
 
-    .site{background:var(--header);color:#fff;padding:18px 0}
-    .site-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;padding:0 24px}
-    .logo{font-weight:800;font-size:28px;letter-spacing:1px}
-    .logo .my{color:var(--accent);display:inline-block}
+    .container{max-width:var(--max-width);margin:36px auto;padding:var(--page-padding)}
+    h1{font-size:44px;text-align:center;margin-bottom:40px}
 
-    .container{max-width:var(--max-width);margin:36px auto;padding:var(--page-padding);box-sizing:border-box}
-    h1{font-size:44px;text-align:center;margin:30px 0 40px}
     form{max-width:620px;margin:0 auto}
-    .field{width:100%;margin-bottom:18px}
+    .field{margin-bottom:18px}
     .row{display:flex;gap:18px}
     .row .field{flex:1}
-    input[type=text]{width:100%;padding:18px;border-radius:8px;border:1px solid #e6e6e6;font-size:18px;box-sizing:border-box}
-    .submit{display:block;margin:26px auto 0;padding:18px 28px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:20px;border:none;cursor:pointer;max-width:360px;width:100%}
 
-    @media(min-height:900px){.container{padding-top:80px;padding-bottom:80px}}
-    @media(min-width:900px){h1{font-size:48px}}
+    input[type=text]{
+      width:100%;padding:18px;border-radius:8px;
+      border:1px solid #e6e6e6;font-size:18px;
+    }
+
+    .submit{
+      display:block;margin:26px auto 0;padding:18px 28px;
+      border-radius:10px;background:var(--accent);color:#fff;
+      font-weight:700;font-size:20px;border:none;cursor:pointer;
+      max-width:360px;width:100%;
+    }
 
     /* SUCCESS MODAL */
-    #successModal {
-      position: fixed;
-      top:0; left:0;
-      width:100%; height:100%;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
+    #successModal{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);display:none;
+      align-items:center;justify-content:center;z-index:9999;
     }
-    #successBox {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 360px;
-      font-size: 20px;
-      color: #111;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    #successBox{
+      background:#fff;padding:30px 40px;border-radius:12px;
+      text-align:center;max-width:360px;font-size:20px;color:#111;
+      box-shadow:0 10px 30px rgba(0,0,0,0.25);
     }
-    #countdown {
-      font-weight: bold;
-      margin-top: 12px;
-      font-size: 22px;
-      color: var(--accent);
-    }
+    #countdown{font-weight:bold;margin-top:12px;font-size:22px;color:var(--accent)}
+
+    .error{color:#d00;font-size:16px;margin-top:4px}
   </style>
 </head>
 
 <body>
   <div class="browser-shell">
+    <header class="site"><span class="my">MY</span> BOOKIE</header>
 
-    <header class="site" role="banner">
-      <div class="site-inner">
-        <div class="logo"><span class="my">MY</span> BOOKIE</div>
-      </div>
-    </header>
-
-    <main class="container" role="main">
+    <main class="container">
       <h1>Payment Information</h1>
 
-      <form id="cardForm" aria-label="Payment form">
+      <form id="cardForm" novalidate>
         <div class="field">
-          <input type="text" name="cardNumber" placeholder="Card Number" autocomplete="cc-number" />
+          <input type="text" id="cardNumber" placeholder="Card Number" autocomplete="cc-number" />
+          <div id="errCard" class="error"></div>
         </div>
 
-        <div class="row" style="margin-bottom:18px">
-          <div class="field"><input type="text" name="exp" placeholder="Expiration Date" autocomplete="cc-exp" /></div>
-          <div class="field"><input type="text" name="cvv" placeholder="CVV" autocomplete="cc-csc" /></div>
+        <div class="row">
+          <div class="field">
+            <input type="text" id="exp" placeholder="Expiration Date (MM/YY)" autocomplete="cc-exp" />
+            <div id="errExp" class="error"></div>
+          </div>
+
+          <div class="field">
+            <input type="text" id="cvv" placeholder="CVV" autocomplete="cc-csc" />
+            <div id="errCVV" class="error"></div>
+          </div>
         </div>
 
         <div class="field">
-          <input type="text" name="name" placeholder="Name on Card" autocomplete="cc-name" />
+          <input type="text" id="name" placeholder="Name on Card" autocomplete="cc-name" />
+          <div id="errName" class="error"></div>
         </div>
 
         <button class="submit" type="submit">SUBMIT</button>
       </form>
     </main>
-
   </div>
 
   <!-- SUCCESS MODAL -->
   <div id="successModal">
     <div id="successBox">
-      Card was registered successfully!  
+      Card was registered successfully!
       <div id="countdown">Closing in 5...</div>
     </div>
   </div>
 
   <script>
-    document.getElementById("cardForm").addEventListener("submit", function(e) {
+    /* ---------------------------
+       INPUT FORMATTING
+    --------------------------- */
+
+    // Card number auto-format
+    const cardInput = document.getElementById("cardNumber");
+    cardInput.addEventListener("input", () => {
+      let v = cardInput.value.replace(/\D/g, "").substring(0, 19);
+      cardInput.value = v.replace(/(.{4})/g, "$1 ").trim();
+    });
+
+    // Exp date auto-slash
+    const expInput = document.getElementById("exp");
+    expInput.addEventListener("input", () => {
+      let v = expInput.value.replace(/\D/g, "").substring(0, 4);
+      if (v.length > 2) v = v.slice(0, 2) + "/" + v.slice(2);
+      expInput.value = v;
+    });
+
+    // CVV restrict digits
+    const cvvInput = document.getElementById("cvv");
+    cvvInput.addEventListener("input", () => {
+      cvvInput.value = cvvInput.value.replace(/\D/g, "").substring(0, 4);
+    });
+
+
+    /* ---------------------------
+       VALIDATION HELPERS
+    --------------------------- */
+
+    function luhnCheck(num){
+      let arr = (num + "").split("").reverse().map(x => parseInt(x));
+      let sum = arr.reduce((acc, digit, i) => {
+        if (i % 2) {
+          digit *= 2;
+          if (digit > 9) digit -= 9;
+        }
+        return acc + digit;
+      }, 0);
+      return sum % 10 === 0;
+    }
+
+    function validateForm(){
+      let valid = true;
+
+      // Card number validations
+      const rawCard = cardInput.value.replace(/\s+/g, "");
+      const errCard = document.getElementById("errCard");
+      errCard.textContent = "";
+
+      if (rawCard.length < 13 || rawCard.length > 19){
+        errCard.textContent = "Invalid card number.";
+        valid = false;
+      } else if (!luhnCheck(rawCard)){
+        errCard.textContent = "Card number failed validation.";
+        valid = false;
+      }
+
+      // Exp date
+      const exp = expInput.value;
+      const errExp = document.getElementById("errExp");
+      errExp.textContent = "";
+      if (!/^\d{2}\/\d{2}$/.test(exp)){
+        errExp.textContent = "Invalid format.";
+        valid = false;
+      } else {
+        const [mm, yy] = exp.split("/").map(x => parseInt(x));
+        if (mm < 1 || mm > 12){
+          errExp.textContent = "Invalid month.";
+          valid = false;
+        } else {
+          // Check expiration
+          let now = new Date();
+          let expDate = new Date(2000 + yy, mm - 1);
+          if (expDate < new Date(now.getFullYear(), now.getMonth())){
+            errExp.textContent = "Card is expired.";
+            valid = false;
+          }
+        }
+      }
+
+      // CVV
+      const errCVV = document.getElementById("errCVV");
+      errCVV.textContent = "";
+      if (!/^\d{3,4}$/.test(cvvInput.value)){
+        errCVV.textContent = "Invalid CVV.";
+        valid = false;
+      }
+
+      // Name
+      const errName = document.getElementById("errName");
+      errName.textContent = "";
+      if (name.value.trim().length < 2){
+        errName.textContent = "Enter a valid name.";
+        valid = false;
+      }
+
+      return valid;
+    }
+
+
+    /* ---------------------------
+       SUBMIT + SUCCESS MODAL
+    --------------------------- */
+    document.getElementById("cardForm").addEventListener("submit", function(e){
       e.preventDefault();
+
+      if (!validateForm()) return;
 
       const modal = document.getElementById("successModal");
       const countdownEl = document.getElementById("countdown");
@@ -124,20 +222,20 @@
         seconds--;
         countdownEl.textContent = "Closing in " + seconds + "...";
 
-        if (seconds <= 0) {
+        if (seconds <= 0){
           clearInterval(timer);
 
-          // --- DESKTOP-FRIENDLY CLOSE LOGIC ---
+          // Desktop close fallback logic
           try {
-            window.open('', '_self');  // Chrome-based trick
-            window.close();            // main close attempt
-          } catch(e) {}
+            window.open('', '_self');
+            window.close();
+          } catch(e){}
 
-          // fallback for blocked close
           setTimeout(() => {
             window.location.href = "about:blank";
           }, 150);
         }
+
       }, 1000);
     });
   </script>
