@@ -3,225 +3,210 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Card Registration</title>
+<title>Register Card</title>
 
 <style>
-  body {
-    margin: 0;
-    background: #0d0d0d;
-    font-family: Arial, sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-  }
+    body {
+        background: #0d1117;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
 
-  .container {
-    width: 90%;
-    max-width: 420px;
-    background: #1a1a1a;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.6);
-  }
+    .container {
+        max-width: 420px;
+        margin: auto;
+        background: #161b22;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
 
-  .title {
-    text-align: center;
-    font-size: 23px;
-    margin-bottom: 22px;
-    font-weight: bold;
-  }
+    h2 {
+        margin-top: 0;
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-  label {
-    display: block;
-    margin: 12px 0 6px;
-    font-size: 14px;
-    color: #ccc;
-  }
+    .form-group {
+        margin-bottom: 15px;
+        position: relative;
+    }
 
-  input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #0d0d0d;
-    font-size: 16px;
-    color: #fff;
-  }
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 15px;
+    }
 
-  .row { display: flex; gap: 10px; }
+    input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #30363d;
+        background: #0d1117;
+        color: #fff;
+        font-size: 16px;
+    }
 
-  .brand-box { position: relative; }
+    .card-logo {
+        width: 50px;
+        position: absolute;
+        right: 10px;
+        top: 36px;
+    }
 
-  .brand-logo {
-    width: 46px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    display: none;
-  }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #238636;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        margin-top: 10px;
+    }
 
-  button {
-    width: 100%;
-    padding: 14px;
-    background: #e89129;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    margin-top: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #000;
-  }
+    #modal, #finalMessage {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.85);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
 
-  /* Processing Modal */
-  #processing {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-  }
+    #modalContent, #finalContent {
+        background: #161b22;
+        padding: 25px;
+        border-radius: 12px;
+        max-width: 350px;
+        width: 100%;
+    }
 
-  /* Success Modal */
-  #success {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    padding: 20px;
-  }
+    .spinner {
+        border: 4px solid #444;
+        border-top: 4px solid #fff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 15px auto;
+        animation: spin 1s linear infinite;
+    }
 
-  /* Spinner */
-  .spinner {
-    width: 55px;
-    height: 55px;
-    border: 5px solid #444;
-    border-top-color: #e89129;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .dots::after {
-    content: "";
-    animation: dots 1.4s infinite steps(4);
-  }
-  @keyframes dots {
-    0% { content: ""; }
-    25% { content: "."; }
-    50% { content: ".."; }
-    75% { content: "..."; }
-    100% { content: ""; }
-  }
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-  <div class="title">Register Your Card</div>
+    <h2>Register your Card</h2>
 
-  <form id="cardForm">
+    <form id="cardForm">
+        <div class="form-group">
+            <label>Card Number</label>
+            <input id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required />
+            <img id="brandLogo" class="card-logo" style="display:none;" />
+        </div>
 
-    <label>Card Number</label>
-    <div class="brand-box">
-      <input id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required />
-      <img id="brandLogo" class="brand-logo" />
-    </div>
+        <div class="form-group">
+            <label>Expiration (MM/YY)</label>
+            <input id="expiry" maxlength="5" placeholder="MM/YY" required />
+        </div>
 
-    <div class="row">
-      <div style="flex:1">
-        <label>Expiration</label>
-        <input id="exp" maxlength="5" placeholder="MM/YY" required />
-      </div>
+        <div class="form-group">
+            <label>CVV</label>
+            <input id="cvv" maxlength="4" placeholder="123" required />
+        </div>
 
-      <div style="flex:1">
-        <label>CVV</label>
-        <input id="cvv" maxlength="4" placeholder="123" required />
-      </div>
-    </div>
-
-    <label>Name on Card</label>
-    <input id="name" placeholder="John Doe" required />
-
-    <button type="submit">Submit</button>
-  </form>
+        <button type="submit">Submit</button>
+    </form>
 </div>
 
 <!-- PROCESSING MODAL -->
-<div id="processing">
-  <div class="spinner"></div>
-  <div class="dots" style="font-size:22px;">Please hold, registering your card</div>
+<div id="modal">
+    <div id="modalContent">
+        <div class="spinner"></div>
+        <h3>Please hold...</h3>
+        <p>Registering your card.</p>
+    </div>
 </div>
 
-<!-- SUCCESS MODAL -->
-<div id="success">
-  <div style="font-size:26px; margin-bottom:15px; color:#e89129;">Card Registered Successfully</div>
-  <div style="font-size:18px; opacity:0.9;">You may now close this window to return to the chat.</div>
+<!-- FINAL MESSAGE MODAL -->
+<div id="finalMessage">
+    <div id="finalContent">
+        <h3>Card Registered Successfully</h3>
+        <p>Your information has been submitted.</p>
+        <br>
+        <p><b>You may now close this window to return to the chat.</b></p>
+        <p style="font-size:14px; opacity:0.7;">
+            In Comm100 you’ll see two ‘X’ buttons:<br><br>
+            • <b>Top-right X</b> closes the entire chat.<br>
+            • <b>Lower X</b> closes only this card form window.<br><br>
+            Please click the **lower X** to return to the chat.
+        </p>
+    </div>
 </div>
 
 <script>
-/* ---------------------------
-   CARD BRAND DETECTION
-----------------------------*/
+// BRAND LOGIC
 const cardInput = document.getElementById("cardNumber");
 const brandLogo = document.getElementById("brandLogo");
 
 cardInput.addEventListener("input", () => {
-  let num = cardInput.value.replace(/\D/g, "");
-  cardInput.value = num.replace(/(.{4})/g, "$1 ").trim();
+    let num = cardInput.value.replace(/\D/g, "");
 
-  let brand = "";
-  if (/^4/.test(num)) brand = "visa";
-  else if (/^5[1-5]/.test(num)) brand = "mastercard";
-  else if (/^3[47]/.test(num)) brand = "amex";
-  else if (/^6(?:011|5)/.test(num)) brand = "discover";
+    // format XXXX XXXX XXXX XXXX
+    cardInput.value = num.replace(/(.{4})/g, "$1 ").trim();
 
-  if (brand) {
-    brandLogo.src = "https://cdn.jsdelivr.net/gh/warrenseen/cc-logos/" + brand + ".png";
-    brandLogo.style.display = "block";
-  } else {
-    brandLogo.style.display = "none";
-  }
+    // detect card type
+    let brand = "";
+    if (/^4/.test(num)) brand = "visa";
+    else if (/^5[1-5]/.test(num)) brand = "mastercard";
+    else if (/^3[47]/.test(num)) brand = "amex";
+
+    if (brand === "visa") {
+        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
+        brandLogo.style.display = "block";
+    } else if (brand === "mastercard") {
+        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg";
+        brandLogo.style.display = "block";
+    } else if (brand === "amex") {
+        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg";
+        brandLogo.style.display = "block";
+    } else {
+        brandLogo.style.display = "none";
+    }
 });
 
-/* ---------------------------
-   EXPIRATION FORMAT
-----------------------------*/
-document.getElementById("exp").addEventListener("input", (e) => {
-  let v = e.target.value.replace(/\D/g, "");
-  e.target.value = v.length >= 3 ? v.slice(0,2) + "/" + v.slice(2,4) : v;
+// EXPIRY FORMAT MM/YY
+document.getElementById("expiry").addEventListener("input", (e) => {
+    let v = e.target.value.replace(/\D/g, "");
+    if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
+    e.target.value = v;
 });
 
-/* ---------------------------
-   CVV LIMIT
-----------------------------*/
-document.getElementById("cvv").addEventListener("input", (e) => {
-  e.target.value = e.target.value.replace(/\D/g, "").slice(0,4);
-});
+// CVV restriction already handled by maxlength
 
-/* ---------------------------
-   FORM SUBMIT + TIMED FLOW
-----------------------------*/
-document.getElementById("cardForm").addEventListener("submit", function(e) {
-  e.preventDefault();
+// FORM SUBMISSION
+document.getElementById("cardForm").addEventListener("submit", function(e){
+    e.preventDefault();
 
-  document.getElementById("processing").style.display = "flex";
+    document.getElementById("modal").style.display = "flex";
 
-  setTimeout(() => {
-    document.getElementById("processing").style.display = "none";
-    document.getElementById("success").style.display = "flex";
-  }, 5000);
+    // 5 second simulated upload
+    setTimeout(() => {
+        document.getElementById("modal").style.display = "none";
+        document.getElementById("finalMessage").style.display = "flex";
+    }, 5000);
 });
 </script>
 
