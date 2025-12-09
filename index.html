@@ -1,212 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Register Card</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Submission</title>
 
 <style>
     body {
-        background: #000; /* MyBookie black */
-        color: #fff;
-        font-family: Arial, sans-serif;
         margin: 0;
-        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #0a0f1a;
+        color: #fff;
     }
 
-    .container {
-        max-width: 420px;
-        margin: auto;
-        background: #1a1a1a; /* MyBookie dark gray */
+    /* --- Center container (Desktop & Mobile) --- */
+    .wrapper {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         padding: 20px;
+        box-sizing: border-box;
+    }
+
+    /* --- Modal card --- */
+    .modal {
+        width: 100%;
+        max-width: 420px;
+        background: #111827;
+        padding: 25px;
         border-radius: 12px;
-        border: 1px solid #333;
-        box-shadow: 0 0 10px rgba(0,0,0,0.7);
+        box-shadow: 0 0 30px rgba(0,0,0,0.6);
     }
 
     h2 {
         margin-top: 0;
+        font-size: 24px;
         text-align: center;
-        margin-bottom: 20px;
-        color: #ff8a00; /* MyBookie orange */
-        font-weight: 700;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-        position: relative;
     }
 
     label {
-        display: block;
+        font-size: 14px;
         margin-bottom: 6px;
-        font-size: 15px;
+        display: block;
     }
 
     input {
         width: 100%;
         padding: 12px;
-        border-radius: 6px;
-        border: 1px solid #444;
-        background: #0d0d0d;
-        color: #fff;
+        margin-bottom: 18px;
         font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #334155;
+        background: #1e293b;
+        color: #fff;
+        box-sizing: border-box;
     }
 
-    .card-logo {
-        width: 50px;
-        position: absolute;
-        right: 10px;
-        top: 38px;
+    input:focus {
+        outline: none;
+        border-color: #4ade80;
+    }
+
+    .row {
+        display: flex;
+        gap: 15px;
+    }
+
+    .row div {
+        flex: 1;
     }
 
     button {
         width: 100%;
-        padding: 14px;
-        background: #ff8a00;
+        padding: 15px;
+        font-size: 18px;
+        background: #10b981;
         border: none;
+        color: #fff;
         border-radius: 6px;
-        font-size: 17px;
-        font-weight: bold;
         cursor: pointer;
-        color: #000;
-        margin-top: 10px;
     }
 
-    /* MODALS */
-    #modal, #finalMessage {
-        position: fixed;
-        top: 0; 
-        left: 0;
-        width: 100%;
-        height: 100dvh; /* mobile fix: always stays centered */
-        background: rgba(0,0,0,0.85);
+    button:hover {
+        background: #0d966c;
+    }
+
+    /* SUCCESS PAGE */
+    #success {
         display: none;
-        justify-content: center;
-        align-items: center;
         text-align: center;
-        padding: 20px;
-        box-sizing: border-box;
     }
 
-    #modalContent, #finalContent {
-        background: #1a1a1a;
-        padding: 25px;
-        border-radius: 12px;
-        max-width: 350px;
-        width: 100%;
-        border: 1px solid #333;
-    }
-
-    .spinner {
-        border: 4px solid #444;
-        border-top: 4px solid #ff8a00;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        margin: 0 auto 15px auto;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        100% { transform: rotate(360deg); }
+    #success h2 {
+        margin-bottom: 10px;
     }
 
 </style>
 </head>
-
 <body>
-<div class="container">
-    <h2>Register Your Card</h2>
 
-    <form id="cardForm">
-        <div class="form-group">
+<div class="wrapper">
+    <!-- Modal -->
+    <div class="modal" id="formModal">
+
+        <h2>Submit Your Card</h2>
+
+        <form id="cardForm">
+
+            <label>Cardholder Name</label>
+            <input type="text" id="name" required>
+
             <label>Card Number</label>
-            <input id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required />
-            <img id="brandLogo" class="card-logo" style="display:none;" />
-        </div>
+            <input type="text" id="number" maxlength="19" required>
 
-        <div class="form-group">
-            <label>Expiration (MM/YY)</label>
-            <input id="expiry" maxlength="5" placeholder="MM/YY" required />
-        </div>
+            <div class="row">
+                <div>
+                    <label>Expiration</label>
+                    <input type="text" id="exp" maxlength="5" placeholder="MM/YY" required>
+                </div>
+                <div>
+                    <label>CVV</label>
+                    <input type="text" id="cvv" maxlength="4" required>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label>CVV</label>
-            <input id="cvv" maxlength="4" placeholder="123" required />
-        </div>
+            <button type="submit">Submit</button>
+        </form>
 
-        <button type="submit">Submit</button>
-    </form>
-</div>
+    </div>
 
-<!-- PROCESSING MODAL -->
-<div id="modal">
-    <div id="modalContent">
-        <div class="spinner"></div>
-        <h3 style="color:#ff8a00;">Please hold...</h3>
-        <p>Registering your card.</p>
+    <!-- Success Message -->
+    <div class="modal" id="success">
+        <h2>Card Submitted</h2>
+        <p>You may now close this window.</p>
     </div>
 </div>
 
-<!-- FINAL MESSAGE MODAL -->
-<div id="finalMessage">
-    <div id="finalContent">
-        <h3 style="color:#ff8a00;">Card Registered Successfully</h3>
-        <p>Your information has been submitted.</p>
-        <br>
-        <p><b>You may now close this window to return to the previous screen.</b></p>
-        <p style="font-size:14px; opacity:0.75;">
-            Please use the <b>lower “X” button</b> to close this window.
-        </p>
-    </div>
-</div>
 
 <script>
-// CARD DETECTION
-const cardInput = document.getElementById("cardNumber");
-const brandLogo = document.getElementById("brandLogo");
+/* -------------------------
+   BASIC FORM VALIDATIONS
+   ------------------------- */
 
-cardInput.addEventListener("input", () => {
-    let num = cardInput.value.replace(/\D/g, "");
-    cardInput.value = num.replace(/(.{4})/g, "$1 ").trim();
+const numberInput = document.getElementById("number");
+const expInput = document.getElementById("exp");
+const cvvInput = document.getElementById("cvv");
 
-    let brand = "";
-    if (/^4/.test(num)) brand = "visa";
-    else if (/^5[1-5]/.test(num)) brand = "mastercard";
-    else if (/^3[47]/.test(num)) brand = "amex";
+/* Format card number as XXXX XXXX XXXX XXXX */
+numberInput.addEventListener("input", () => {
+    let value = numberInput.value.replace(/\D/g, "");
+    value = value.match(/.{1,4}/g)?.join(" ") || value;
+    numberInput.value = value;
+});
 
-    if (brand === "visa") {
-        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
-        brandLogo.style.display = "block";
-    } else if (brand === "mastercard") {
-        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg";
-        brandLogo.style.display = "block";
-    } else if (brand === "amex") {
-        brandLogo.src = "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg";
-        brandLogo.style.display = "block";
+/* Expiration MM/YY with auto slash */
+expInput.addEventListener("input", () => {
+    let v = expInput.value.replace(/\D/g, "");
+    if (v.length >= 3) {
+        expInput.value = v.slice(0, 2) + "/" + v.slice(2, 4);
     } else {
-        brandLogo.style.display = "none";
+        expInput.value = v;
     }
 });
 
-// EXPIRY FORMAT
-document.getElementById("expiry").addEventListener("input", (e) => {
-    let v = e.target.value.replace(/\D/g, "");
-    if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
-    e.target.value = v;
+/* CVV must be digits only */
+cvvInput.addEventListener("input", () => {
+    cvvInput.value = cvvInput.value.replace(/\D/g, "");
 });
 
-// FORM PROCESS
-document.getElementById("cardForm").addEventListener("submit", function(e){
+/* Submit handler → Show success page */
+document.getElementById("cardForm").addEventListener("submit", (e) => {
     e.preventDefault();
 
-    document.getElementById("modal").style.display = "flex";
-
-    setTimeout(() => {
-        document.getElementById("modal").style.display = "none";
-        document.getElementById("finalMessage").style.display = "flex";
-    }, 5000);
+    document.getElementById("formModal").style.display = "none";
+    document.getElementById("success").style.display = "block";
 });
 </script>
 
