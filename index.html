@@ -7,7 +7,7 @@
 
 <style>
     body {
-        background: #0d1117;
+        background: #000; /* MyBookie black */
         color: #fff;
         font-family: Arial, sans-serif;
         margin: 0;
@@ -17,16 +17,19 @@
     .container {
         max-width: 420px;
         margin: auto;
-        background: #161b22;
+        background: #1a1a1a; /* MyBookie dark gray */
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.6);
+        border: 1px solid #333;
+        box-shadow: 0 0 10px rgba(0,0,0,0.7);
     }
 
     h2 {
         margin-top: 0;
         text-align: center;
         margin-bottom: 20px;
+        color: #ff8a00; /* MyBookie orange */
+        font-weight: 700;
     }
 
     .form-group {
@@ -42,10 +45,10 @@
 
     input {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
         border-radius: 6px;
-        border: 1px solid #30363d;
-        background: #0d1117;
+        border: 1px solid #444;
+        background: #0d0d0d;
         color: #fff;
         font-size: 16px;
     }
@@ -54,19 +57,19 @@
         width: 50px;
         position: absolute;
         right: 10px;
-        top: 36px;
+        top: 38px;
     }
 
     button {
         width: 100%;
-        padding: 12px;
-        background: #238636;
+        padding: 14px;
+        background: #ff8a00;
         border: none;
         border-radius: 6px;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: bold;
         cursor: pointer;
-        color: white;
+        color: #000;
         margin-top: 10px;
     }
 
@@ -83,16 +86,17 @@
     }
 
     #modalContent, #finalContent {
-        background: #161b22;
+        background: #1a1a1a;
         padding: 25px;
         border-radius: 12px;
         max-width: 350px;
         width: 100%;
+        border: 1px solid #333;
     }
 
     .spinner {
         border: 4px solid #444;
-        border-top: 4px solid #fff;
+        border-top: 4px solid #ff8a00;
         border-radius: 50%;
         width: 40px;
         height: 40px;
@@ -108,7 +112,7 @@
 
 <body>
 <div class="container">
-    <h2>Register your Card</h2>
+    <h2>Register Your Card</h2>
 
     <form id="cardForm">
         <div class="form-group">
@@ -135,7 +139,7 @@
 <div id="modal">
     <div id="modalContent">
         <div class="spinner"></div>
-        <h3>Please hold...</h3>
+        <h3 style="color:#ff8a00;">Please hold...</h3>
         <p>Registering your card.</p>
     </div>
 </div>
@@ -143,31 +147,25 @@
 <!-- FINAL MESSAGE MODAL -->
 <div id="finalMessage">
     <div id="finalContent">
-        <h3>Card Registered Successfully</h3>
+        <h3 style="color:#ff8a00;">Card Registered Successfully</h3>
         <p>Your information has been submitted.</p>
         <br>
-        <p><b>You may now close this window to return to the chat.</b></p>
-        <p style="font-size:14px; opacity:0.7;">
-            In Comm100 you’ll see two ‘X’ buttons:<br><br>
-            • <b>Top-right X</b> closes the entire chat.<br>
-            • <b>Lower X</b> closes only this card form window.<br><br>
-            Please click the **lower X** to return to the chat.
+        <p><b>You may now close this window to return to the previous screen.</b></p>
+        <p style="font-size:14px; opacity:0.75;">
+            Please use the <b>lower “X” button</b> to close this window.
         </p>
     </div>
 </div>
 
 <script>
-// BRAND LOGIC
+// CARD DETECTION
 const cardInput = document.getElementById("cardNumber");
 const brandLogo = document.getElementById("brandLogo");
 
 cardInput.addEventListener("input", () => {
     let num = cardInput.value.replace(/\D/g, "");
-
-    // format XXXX XXXX XXXX XXXX
     cardInput.value = num.replace(/(.{4})/g, "$1 ").trim();
 
-    // detect card type
     let brand = "";
     if (/^4/.test(num)) brand = "visa";
     else if (/^5[1-5]/.test(num)) brand = "mastercard";
@@ -187,22 +185,19 @@ cardInput.addEventListener("input", () => {
     }
 });
 
-// EXPIRY FORMAT MM/YY
+// EXPIRY FORMAT
 document.getElementById("expiry").addEventListener("input", (e) => {
     let v = e.target.value.replace(/\D/g, "");
     if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2,4);
     e.target.value = v;
 });
 
-// CVV restriction already handled by maxlength
-
-// FORM SUBMISSION
+// FORM PROCESS
 document.getElementById("cardForm").addEventListener("submit", function(e){
     e.preventDefault();
 
     document.getElementById("modal").style.display = "flex";
 
-    // 5 second simulated upload
     setTimeout(() => {
         document.getElementById("modal").style.display = "none";
         document.getElementById("finalMessage").style.display = "flex";
