@@ -8,13 +8,12 @@
 <style>
   body {
     margin: 0;
-    padding: 0;
     background: #0d0d0d;
     font-family: Arial, sans-serif;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     color: #fff;
   }
 
@@ -51,14 +50,9 @@
     color: #fff;
   }
 
-  .row {
-    display: flex;
-    gap: 10px;
-  }
+  .row { display: flex; gap: 10px; }
 
-  .brand-box {
-    position: relative;
-  }
+  .brand-box { position: relative; }
 
   .brand-logo {
     width: 46px;
@@ -82,7 +76,7 @@
   }
 
   /* Processing Modal */
-  #successModal {
+  #processing {
     display: none;
     position: fixed;
     inset: 0;
@@ -91,7 +85,19 @@
     align-items: center;
     flex-direction: column;
     text-align: center;
-    animation: fadeIn 0.25s ease;
+  }
+
+  /* Success Modal */
+  #success {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
   }
 
   /* Spinner */
@@ -104,31 +110,22 @@
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Animated dots */
   .dots::after {
-    content: '';
+    content: "";
     animation: dots 1.4s infinite steps(4);
   }
-
   @keyframes dots {
-    0% { content: ''; }
-    25% { content: '.'; }
-    50% { content: '..'; }
-    75% { content: '...'; }
-    100% { content: ''; }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    0% { content: ""; }
+    25% { content: "."; }
+    50% { content: ".."; }
+    75% { content: "..."; }
+    100% { content: ""; }
   }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -161,10 +158,16 @@
   </form>
 </div>
 
-<!-- Processing Modal -->
-<div id="successModal">
+<!-- PROCESSING MODAL -->
+<div id="processing">
   <div class="spinner"></div>
   <div class="dots" style="font-size:22px;">Please hold, registering your card</div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div id="success">
+  <div style="font-size:26px; margin-bottom:15px; color:#e89129;">Card Registered Successfully</div>
+  <div style="font-size:18px; opacity:0.9;">You may now close this window to return to the chat.</div>
 </div>
 
 <script>
@@ -193,7 +196,7 @@ cardInput.addEventListener("input", () => {
 });
 
 /* ---------------------------
-   EXPIRATION INPUT FORMAT
+   EXPIRATION FORMAT
 ----------------------------*/
 document.getElementById("exp").addEventListener("input", (e) => {
   let v = e.target.value.replace(/\D/g, "");
@@ -208,20 +211,16 @@ document.getElementById("cvv").addEventListener("input", (e) => {
 });
 
 /* ---------------------------
-   FORM SUBMIT + COMM100 CLOSE
+   FORM SUBMIT + TIMED FLOW
 ----------------------------*/
 document.getElementById("cardForm").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const modal = document.getElementById("successModal");
-  modal.style.display = "flex";
+  document.getElementById("processing").style.display = "flex";
 
-  // Simulate “processing”
   setTimeout(() => {
-
-    // This is the ONLY method Comm100 accepts:
-    window.parent.postMessage({ type: "closeChatPopup" }, "*");
-
+    document.getElementById("processing").style.display = "none";
+    document.getElementById("success").style.display = "flex";
   }, 5000);
 });
 </script>
