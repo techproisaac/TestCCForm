@@ -1,182 +1,344 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Submission</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register Card</title>
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0a0f1a;
-        color: #fff;
+  <style>
+    :root{
+      --bg: #000000;
+      --panel: #0f0f10;
+      --input-bg: #121214;
+      --muted: #9aa0a6;
+      --accent: #F58220; /* MyBookie Orange - chosen */
+      --card-border: #27292b;
+      --radius: 10px;
+      --max-width: 440px;
+      --gutter: 20px;
+      font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color-scheme: dark;
     }
 
-    /* --- Center container (Desktop & Mobile) --- */
-    .wrapper {
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        box-sizing: border-box;
+    html,body{height:100%;margin:0;background:var(--bg);color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    /* full-height wrapper using dynamic vh for mobile correctness */
+    .wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+
+    /* main card */
+    .card{
+      width:100%;
+      max-width:var(--max-width);
+      background:linear-gradient(180deg,var(--panel), #0b0b0c);
+      border:1px solid var(--card-border);
+      border-radius:16px;
+      padding:26px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      box-sizing:border-box;
     }
 
-    /* --- Modal card --- */
-    .modal {
-        width: 100%;
-        max-width: 420px;
-        background: #111827;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    .brand {
+      text-align:center;
+      font-weight:800;
+      font-size:18px;
+      letter-spacing:1px;
+      color:var(--accent);
+      margin-bottom:8px;
+    }
+    h1{
+      margin:0 0 18px 0;
+      font-size:20px;
+      text-align:center;
+      color:#fff;
+      font-weight:700;
     }
 
-    h2 {
-        margin-top: 0;
-        font-size: 24px;
-        text-align: center;
+    form{display:block}
+    .field{margin-bottom:14px; position:relative}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=tel], input[type=search]{
+      width:100%;
+      padding:12px 14px;
+      padding-right:70px; /* space for logo */
+      border-radius:10px;
+      border:1px solid #232425;
+      background:var(--input-bg);
+      color:#fff;
+      font-size:15px;
+      box-sizing:border-box;
+    }
+    input::placeholder{color:#6b6f73}
+
+    /* small row for exp + cvv */
+    .row{display:flex;gap:12px}
+    .row .field{flex:1;margin-bottom:14px}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* brand logo inside card number field */
+    .card-logo{
+      position:absolute;
+      right:12px;
+      top:36px;
+      width:48px;
+      height:auto;
+      display:none;
+      pointer-events:none;
     }
 
-    label {
-        font-size: 14px;
-        margin-bottom: 6px;
-        display: block;
+    .submit{
+      width:100%;
+      display:inline-block;
+      margin-top:8px;
+      padding:14px;
+      border-radius:12px;
+      background:var(--accent);
+      color:#000;
+      border:none;
+      font-weight:800;
+      font-size:16px;
+      cursor:pointer;
     }
 
-    input {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 18px;
-        font-size: 16px;
-        border-radius: 6px;
-        border: 1px solid #334155;
-        background: #1e293b;
-        color: #fff;
-        box-sizing: border-box;
+    .submit:active{transform:translateY(1px)}
+
+    /* processing + success overlays (use 100dvh) */
+    .overlay{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100dvh;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.78);
+      z-index:9999;
+      padding:24px;
+      box-sizing:border-box;
     }
 
-    input:focus {
-        outline: none;
-        border-color: #4ade80;
+    .panel{
+      width:100%;
+      max-width:420px;
+      background:linear-gradient(180deg,#0f0f10,#0b0b0c);
+      border-radius:14px;
+      padding:28px;
+      box-sizing:border-box;
+      border:1px solid #222426;
+      text-align:center;
+      box-shadow:0 12px 30px rgba(0,0,0,0.6);
     }
 
-    .row {
-        display: flex;
-        gap: 15px;
+    /* spinner (accent) */
+    .spinner{
+      width:56px;height:56px;border-radius:50%;
+      border:5px solid rgba(255,255,255,0.08);
+      border-top-color:var(--accent);
+      margin:0 auto 18px auto;
+      animation:spin 1s linear infinite;
     }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .row div {
-        flex: 1;
+    .big{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px}
+    .muted{color:var(--muted);font-size:14px}
+
+    /* success check */
+    .check{
+      display:inline-block;
+      width:56px;height:56px;border-radius:50%;
+      background:linear-gradient(180deg, rgba(245,130,32,0.12), rgba(245,130,32,0.08));
+      border:2px solid rgba(245,130,32,0.18);
+      margin:0 auto 16px auto;
+      align-items:center;
+      justify-content:center;
+      display:flex;
     }
+    .check svg{fill:var(--accent); width:28px;height:28px}
 
-    button {
-        width: 100%;
-        padding: 15px;
-        font-size: 18px;
-        background: #10b981;
-        border: none;
-        color: #fff;
-        border-radius: 6px;
-        cursor: pointer;
+    /* responsive tweaks */
+    @media (max-width:420px){
+      .card{padding:18px;border-radius:12px}
+      input[type=text]{padding-right:64px}
+      .card-logo{width:40px;top:34px}
     }
-
-    button:hover {
-        background: #0d966c;
-    }
-
-    /* SUCCESS PAGE */
-    #success {
-        display: none;
-        text-align: center;
-    }
-
-    #success h2 {
-        margin-bottom: 10px;
-    }
-
-</style>
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="card" role="region" aria-label="Card submission form">
+      <div class="brand">MY<span style="color:#fff">BOOKIE</span></div>
+      <h1>Payment Information</h1>
 
-<div class="wrapper">
-    <!-- Modal -->
-    <div class="modal" id="formModal">
+      <form id="cardForm" novalidate>
+        <div class="field">
+          <label for="name">Name on Card</label>
+          <input id="name" name="name" type="text" inputmode="text" placeholder="John A. Customer" required />
+        </div>
 
-        <h2>Submit Your Card</h2>
+        <div class="field">
+          <label for="cardNumber">Card Number</label>
+          <input id="cardNumber" name="cardNumber" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="23" autocomplete="cc-number" required />
+          <img id="brandLogo" class="card-logo" alt="" aria-hidden />
+        </div>
 
-        <form id="cardForm">
+        <div class="row">
+          <div class="field">
+            <label for="exp">Expiration (MM/YY)</label>
+            <input id="exp" name="exp" type="text" inputmode="numeric" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" required />
+          </div>
 
-            <label>Cardholder Name</label>
-            <input type="text" id="name" required>
+          <div class="field">
+            <label for="cvv">CVV</label>
+            <input id="cvv" name="cvv" type="text" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="cc-csc" required />
+          </div>
+        </div>
 
-            <label>Card Number</label>
-            <input type="text" id="number" maxlength="19" required>
-
-            <div class="row">
-                <div>
-                    <label>Expiration</label>
-                    <input type="text" id="exp" maxlength="5" placeholder="MM/YY" required>
-                </div>
-                <div>
-                    <label>CVV</label>
-                    <input type="text" id="cvv" maxlength="4" required>
-                </div>
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-
+        <button class="submit" type="submit">SUBMIT</button>
+      </form>
     </div>
+  </div>
 
-    <!-- Success Message -->
-    <div class="modal" id="success">
-        <h2>Card Submitted</h2>
-        <p>You may now close this window.</p>
+  <!-- PROCESSING OVERLAY -->
+  <div id="processing" class="overlay" aria-hidden="true">
+    <div class="panel" role="status" aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="big">Please hold...</div>
+      <div class="muted">Registering your card</div>
     </div>
-</div>
+  </div>
 
+  <!-- SUCCESS OVERLAY -->
+  <div id="success" class="overlay" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <div class="check" aria-hidden="true">
+        <!-- check icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9.3 16.2 4.9 11.8 3.5 13.2l5.8 5.8 11-11L18.7 6z"/>
+        </svg>
+      </div>
 
-<script>
-/* -------------------------
-   BASIC FORM VALIDATIONS
-   ------------------------- */
+      <div id="successTitle" class="big">Card Registered Successfully</div>
+      <div class="muted">Your card information was submitted securely.</div>
 
-const numberInput = document.getElementById("number");
-const expInput = document.getElementById("exp");
-const cvvInput = document.getElementById("cvv");
+      <div style="height:14px"></div>
+      <div style="font-size:14px;color:#e6e6e6">
+        <strong>Please use the lower “X” button to close this window.</strong>
+      </div>
+    </div>
+  </div>
 
-/* Format card number as XXXX XXXX XXXX XXXX */
-numberInput.addEventListener("input", () => {
-    let value = numberInput.value.replace(/\D/g, "");
-    value = value.match(/.{1,4}/g)?.join(" ") || value;
-    numberInput.value = value;
-});
+  <script>
+    // ELEMENTS
+    const form = document.getElementById('cardForm');
+    const cardNumber = document.getElementById('cardNumber');
+    const exp = document.getElementById('exp');
+    const cvv = document.getElementById('cvv');
+    const nameInput = document.getElementById('name');
+    const brandLogo = document.getElementById('brandLogo');
+    const processing = document.getElementById('processing');
+    const success = document.getElementById('success');
 
-/* Expiration MM/YY with auto slash */
-expInput.addEventListener("input", () => {
-    let v = expInput.value.replace(/\D/g, "");
-    if (v.length >= 3) {
-        expInput.value = v.slice(0, 2) + "/" + v.slice(2, 4);
-    } else {
-        expInput.value = v;
+    // CARD INPUT FORMATTING (spaces every 4)
+    cardNumber.addEventListener('input', (e) => {
+      const raw = cardNumber.value.replace(/\D/g, '').slice(0,19); // allow up to 19 digits
+      // insert spaces: group 4, but AMEX 4-6-5 could be left alone for simplicity here
+      const spaced = raw.match(/.{1,4}/g)?.join(' ') || raw;
+      cardNumber.value = spaced;
+      detectBrand(raw);
+    });
+
+    // EXP formatting MM/YY
+    exp.addEventListener('input', (e) => {
+      let v = exp.value.replace(/\D/g, '').slice(0,4);
+      if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+      exp.value = v;
+    });
+
+    // CVV numeric only
+    cvv.addEventListener('input', () => {
+      cvv.value = cvv.value.replace(/\D/g, '').slice(0,4);
+    });
+
+    // BRAND DETECTION + LOGO
+    // uses commons CDN images from Wikimedia / jsdelivr
+    function detectBrand(digits){
+      let brand = '';
+      if (/^4/.test(digits)) brand = 'visa';
+      else if (/^5[1-5]/.test(digits)) brand = 'mastercard';
+      else if (/^3[47]/.test(digits)) brand = 'amex';
+      else if (/^(6011|65|64[4-9])/.test(digits)) brand = 'discover';
+
+      if (brand){
+        // pick suitable logo source (prefer small PNG/SVG)
+        const map = {
+          visa: 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png',
+          mastercard: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg',
+          amex: 'https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg',
+          discover: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/Discover_Card_logo.svg'
+        };
+        brandLogo.src = map[brand];
+        brandLogo.alt = brand + ' card';
+        brandLogo.style.display = 'block';
+      } else {
+        brandLogo.style.display = 'none';
+        brandLogo.alt = '';
+      }
     }
-});
 
-/* CVV must be digits only */
-cvvInput.addEventListener("input", () => {
-    cvvInput.value = cvvInput.value.replace(/\D/g, "");
-});
+    // light client-side validations (no Luhn)
+    function validate(){
+      const errs = [];
+      const rawNumber = cardNumber.value.replace(/\s/g, '');
+      if (rawNumber.length < 13 || rawNumber.length > 19) errs.push('Card number length is invalid.');
+      if (!/^\d{2}\/\d{2}$/.test(exp.value)) errs.push('Expiration must be MM/YY.');
+      else {
+        // check not expired (end of month)
+        const [mmStr, yyStr] = exp.value.split('/');
+        const mm = parseInt(mmStr,10);
+        const yy = parseInt(yyStr,10);
+        if (!(mm >=1 && mm <= 12)) errs.push('Expiration month invalid.');
+        else {
+          const now = new Date();
+          const currentYear = now.getFullYear() % 100;
+          const currentMonth = now.getMonth() + 1;
+          if (yy < currentYear || (yy === currentYear && mm < currentMonth)) errs.push('Card expired.');
+        }
+      }
+      if (!/^\d{3,4}$/.test(cvv.value)) errs.push('CVV must be 3 or 4 digits.');
+      if (!nameInput.value.trim()) errs.push('Name is required.');
+      return errs;
+    }
 
-/* Submit handler → Show success page */
-document.getElementById("cardForm").addEventListener("submit", (e) => {
-    e.preventDefault();
+    // handle submit: show processing overlay for 5s then success overlay
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const errors = validate();
+      if (errors.length){
+        // simple alert for now — keep brief and not disruptive
+        alert(errors[0]);
+        return;
+      }
 
-    document.getElementById("formModal").style.display = "none";
-    document.getElementById("success").style.display = "block";
-});
-</script>
+      processing.style.display = 'flex';
 
+      // simulate upload/process for 5s
+      setTimeout(() => {
+        processing.style.display = 'none';
+        success.style.display = 'flex';
+      }, 5000);
+    });
+
+    // accessibility: hide overlays from assistive until shown
+    const observer = new MutationObserver(() => {
+      processing.setAttribute('aria-hidden', processing.style.display === 'flex' ? 'false' : 'true');
+      success.setAttribute('aria-hidden', success.style.display === 'flex' ? 'false' : 'true');
+    });
+    observer.observe(processing, { attributes: true, attributeFilter: ['style'] });
+    observer.observe(success, { attributes: true, attributeFilter: ['style'] });
+
+    // ensure overlays centered on resize (mobile UI bars)
+    window.addEventListener('resize', () => {
+      // no JS reposition necessary thanks to CSS 100dvh + flexbox
+      // leave hook here if you want additional handling later
+    });
+  </script>
 </body>
 </html>
