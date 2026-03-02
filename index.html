@@ -219,9 +219,7 @@
       <div class="muted">Your card information was submitted securely.</div>
 
       <div style="height:14px"></div>
-      <div style="font-size:14px;color:#e6e6e6">
-        <strong>Please use the lower “X” button to close this window.</strong>
-      </div>
+      <button id="closeBtn" class="submit" style="max-width:120px;">OK</button>
     </div>
   </div>
 
@@ -339,6 +337,14 @@
       // no JS reposition necessary thanks to CSS 100dvh + flexbox
       // leave hook here if you want additional handling later
     });
+
+    // close button on success panel
+    const closeBtn = document.getElementById('closeBtn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        window.close();
+      });
+    }
   </script>
 </body>
 </html>
