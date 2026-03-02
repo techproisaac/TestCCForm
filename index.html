@@ -342,7 +342,16 @@
     const closeBtn = document.getElementById('closeBtn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        window.close();
+        // some browsers only allow closing windows opened by script
+        // try common workaround by navigating self to blank then closing
+        try {
+          window.open('','_self');
+          window.close();
+        } catch (e) {
+          // fallback: hide overlays and notify user
+          success.style.display = 'none';
+          alert('Please close this tab manually.');
+        }
       });
     }
   </script>
