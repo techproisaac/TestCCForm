@@ -343,10 +343,40 @@
 <!--Begin Comm100 Live Chat Code-->
 <div id="comm100-button-34b54267-5f99-4e8d-9914-66febb88e571"></div>
 <script type="text/javascript">
-  var comm100_lc = comm100_lc || {};
-  comm100_lc.customVariables = [
-    { name: "GreetingMessage", value: "THIS SHOULD SHOW" }
-];
+  Comm100API.on('livechat.agentJoined', function (event) {
+
+    var agentName = event.agent.name;
+    var visitorName = event.chat.visitorName;
+    var inquiryType = event.chat.preChatFormValues.departmentsSBK;
+
+    var dynamicMessage = "and I will be assisting you today.";
+
+    switch(inquiryType) {
+        case "Deposit":
+            dynamicMessage = "and I will be helping you with your deposit today.";
+            break;
+        case "Casino":
+            dynamicMessage = "and I will be helping you with your casino inquiry today.";
+            break;
+        case "Promotions / Bonuses":
+            dynamicMessage = "and I will be helping you with your bonuses and promotions question.";
+            break;
+        case "Withdrawal":
+            dynamicMessage = "and I will be assisting you with your withdrawal.";
+            break;
+        case "Sportsbook":
+            dynamicMessage = "and I will be helping you with your sports inquiry.";
+            break;
+        case "My Account":
+            dynamicMessage = "and I will be helping you with your account inquiry.";
+            break;
+    }
+
+    Comm100API.do('livechat.sendMessage', {
+        message: "Hello " + visitorName + ", my name is " + agentName + " " + dynamicMessage
+    });
+
+});
   var Comm100API=Comm100API||{};(function(t){function e(e){var a=document.createElement("script"),c=document.getElementsByTagName("script")[0];a.type="text/javascript",a.async=!0,a.src=e+t.site_id,c.parentNode.insertBefore(a,c)}t.chat_buttons=t.chat_buttons||[],t.chat_buttons.push({code_plan:"34b54267-5f99-4e8d-9914-66febb88e571",div_id:"comm100-button-34b54267-5f99-4e8d-9914-66febb88e571"}),t.site_id=75000178,t.main_code_plan="34b54267-5f99-4e8d-9914-66febb88e571",e("https://vue.comm100.com/livechat.ashx?siteId="),setTimeout(function(){t.loaded||e("https://standby.comm100vue.com/livechat.ashx?siteId=")},5e3)})(Comm100API||{})
 </script>
 <!--End Comm100 Live Chat Code-->
