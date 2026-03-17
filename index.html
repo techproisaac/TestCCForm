@@ -11,7 +11,7 @@
       --panel: #0f0f10;
       --input-bg: #121214;
       --muted: #9aa0a6;
-      --accent: #F58220; /* MyBookie Orange - chosen */
+      --accent: #F58220;
       --card-border: #27292b;
       --radius: 10px;
       --max-width: 440px;
@@ -21,10 +21,8 @@
     }
 
     html,body{height:100%;margin:0;background:var(--bg);color:#fff;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-    /* full-height wrapper using dynamic vh for mobile correctness */
     .wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
 
-    /* main card */
     .card{
       width:100%;
       max-width:var(--max-width);
@@ -55,10 +53,9 @@
     form{display:block}
     .field{margin-bottom:14px; position:relative}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type=text], input[type=tel], input[type=search]{
+    input[type=text], input[type=tel], input[type=search], input[type=number]{
       width:100%;
       padding:12px 14px;
-      padding-right:70px; /* space for logo */
       border-radius:10px;
       border:1px solid #232425;
       background:var(--input-bg);
@@ -66,12 +63,37 @@
       font-size:15px;
       box-sizing:border-box;
     }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* card number field with logo space */
+    #cardNumber {
+      padding-right: 70px;
+    }
+
     input::placeholder{color:#6b6f73}
 
-    /* small row for exp + cvv */
     .row{display:flex;gap:12px}
     .row .field{flex:1;margin-bottom:14px}
-    .small{font-size:13px;color:var(--muted)}
+
+    /* deposit amount wrapper */
+    .amount-wrap {
+      position: relative;
+    }
+    .amount-wrap .currency-symbol {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 15px;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .amount-wrap input {
+      padding-left: 28px !important;
+    }
 
     /* brand logo inside card number field */
     .card-logo{
@@ -100,7 +122,6 @@
 
     .submit:active{transform:translateY(1px)}
 
-    /* processing + success overlays (use 100dvh) */
     .overlay{
       position:fixed;
       inset:0;
@@ -127,7 +148,6 @@
       box-shadow:0 12px 30px rgba(0,0,0,0.6);
     }
 
-    /* spinner (accent) */
     .spinner{
       width:56px;height:56px;border-radius:50%;
       border:5px solid rgba(255,255,255,0.08);
@@ -140,23 +160,28 @@
     .big{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px}
     .muted{color:var(--muted);font-size:14px}
 
-    /* success check */
     .check{
-      display:inline-block;
+      display:flex;
       width:56px;height:56px;border-radius:50%;
       background:linear-gradient(180deg, rgba(245,130,32,0.12), rgba(245,130,32,0.08));
       border:2px solid rgba(245,130,32,0.18);
       margin:0 auto 16px auto;
       align-items:center;
       justify-content:center;
-      display:flex;
     }
     .check svg{fill:var(--accent); width:28px;height:28px}
 
-    /* responsive tweaks */
+    .deposit-amount-display {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 10px 0 4px 0;
+      letter-spacing: -0.5px;
+    }
+
     @media (max-width:420px){
       .card{padding:18px;border-radius:12px}
-      input[type=text]{padding-right:64px}
+      #cardNumber{padding-right:64px}
       .card-logo{width:40px;top:34px}
     }
   </style>
@@ -191,7 +216,15 @@
           </div>
         </div>
 
-        <button class="submit" type="submit">SUBMIT</button>
+        <div class="field">
+          <label for="depositAmount">Deposit Amount</label>
+          <div class="amount-wrap">
+            <span class="currency-symbol">$</span>
+            <input id="depositAmount" name="depositAmount" type="number" inputmode="decimal" placeholder="0.00" min="1" step="0.01" required />
+          </div>
+        </div>
+
+        <button class="submit" type="submit">SUBMIT DEPOSIT</button>
       </form>
     </div>
   </div>
@@ -201,7 +234,7 @@
     <div class="panel" role="status" aria-live="polite">
       <div class="spinner" aria-hidden="true"></div>
       <div class="big">Please hold...</div>
-      <div class="muted">Registering your card</div>
+      <div class="muted">Processing your deposit</div>
     </div>
   </div>
 
@@ -209,14 +242,14 @@
   <div id="success" class="overlay" aria-hidden="true">
     <div class="panel" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <div class="check" aria-hidden="true">
-        <!-- check icon -->
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M9.3 16.2 4.9 11.8 3.5 13.2l5.8 5.8 11-11L18.7 6z"/>
         </svg>
       </div>
 
-      <div id="successTitle" class="big">Card Registered Successfully</div>
-      <div class="muted">Your card information was submitted securely.</div>
+      <div id="successTitle" class="big">Deposit Successful!</div>
+      <div class="deposit-amount-display" id="successAmount"></div>
+      <div class="muted">has been deposited to your account.</div>
 
       <div style="height:14px"></div>
       <button id="closeBtn" class="submit" style="max-width:120px;">OK</button>
@@ -224,48 +257,42 @@
   </div>
 
   <script>
-    // ELEMENTS
     const form = document.getElementById('cardForm');
     const cardNumber = document.getElementById('cardNumber');
     const exp = document.getElementById('exp');
     const cvv = document.getElementById('cvv');
     const nameInput = document.getElementById('name');
+    const depositAmount = document.getElementById('depositAmount');
     const brandLogo = document.getElementById('brandLogo');
     const processing = document.getElementById('processing');
     const success = document.getElementById('success');
+    const successAmount = document.getElementById('successAmount');
 
-    // CARD INPUT FORMATTING (spaces every 4)
-    cardNumber.addEventListener('input', (e) => {
-      const raw = cardNumber.value.replace(/\D/g, '').slice(0,19); // allow up to 19 digits
-      // insert spaces: group 4, but AMEX 4-6-5 could be left alone for simplicity here
+    cardNumber.addEventListener('input', () => {
+      const raw = cardNumber.value.replace(/\D/g, '').slice(0, 19);
       const spaced = raw.match(/.{1,4}/g)?.join(' ') || raw;
       cardNumber.value = spaced;
       detectBrand(raw);
     });
 
-    // EXP formatting MM/YY
-    exp.addEventListener('input', (e) => {
-      let v = exp.value.replace(/\D/g, '').slice(0,4);
-      if (v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+    exp.addEventListener('input', () => {
+      let v = exp.value.replace(/\D/g, '').slice(0, 4);
+      if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2, 4);
       exp.value = v;
     });
 
-    // CVV numeric only
     cvv.addEventListener('input', () => {
-      cvv.value = cvv.value.replace(/\D/g, '').slice(0,4);
+      cvv.value = cvv.value.replace(/\D/g, '').slice(0, 4);
     });
 
-    // BRAND DETECTION + LOGO
-    // uses commons CDN images from Wikimedia / jsdelivr
-    function detectBrand(digits){
+    function detectBrand(digits) {
       let brand = '';
       if (/^4/.test(digits)) brand = 'visa';
       else if (/^5[1-5]/.test(digits)) brand = 'mastercard';
       else if (/^3[47]/.test(digits)) brand = 'amex';
       else if (/^(6011|65|64[4-9])/.test(digits)) brand = 'discover';
 
-      if (brand){
-        // pick suitable logo source (prefer small PNG/SVG)
+      if (brand) {
         const map = {
           visa: 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png',
           mastercard: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg',
@@ -281,18 +308,21 @@
       }
     }
 
-    // light client-side validations (no Luhn)
-    function validate(){
+    function formatCurrency(value) {
+      const num = parseFloat(value);
+      return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function validate() {
       const errs = [];
       const rawNumber = cardNumber.value.replace(/\s/g, '');
       if (rawNumber.length < 13 || rawNumber.length > 19) errs.push('Card number length is invalid.');
       if (!/^\d{2}\/\d{2}$/.test(exp.value)) errs.push('Expiration must be MM/YY.');
       else {
-        // check not expired (end of month)
         const [mmStr, yyStr] = exp.value.split('/');
-        const mm = parseInt(mmStr,10);
-        const yy = parseInt(yyStr,10);
-        if (!(mm >=1 && mm <= 12)) errs.push('Expiration month invalid.');
+        const mm = parseInt(mmStr, 10);
+        const yy = parseInt(yyStr, 10);
+        if (!(mm >= 1 && mm <= 12)) errs.push('Expiration month invalid.');
         else {
           const now = new Date();
           const currentYear = now.getFullYear() % 100;
@@ -302,29 +332,31 @@
       }
       if (!/^\d{3,4}$/.test(cvv.value)) errs.push('CVV must be 3 or 4 digits.');
       if (!nameInput.value.trim()) errs.push('Name is required.');
+      const amount = parseFloat(depositAmount.value);
+      if (!depositAmount.value || isNaN(amount) || amount <= 0) errs.push('Please enter a valid deposit amount.');
       return errs;
     }
 
-    // handle submit: show processing overlay for 5s then success overlay
     form.addEventListener('submit', (ev) => {
       ev.preventDefault();
       const errors = validate();
-      if (errors.length){
-        // simple alert for now — keep brief and not disruptive
+      if (errors.length) {
         alert(errors[0]);
         return;
       }
 
+      // Store the amount before showing processing
+      const formattedAmount = formatCurrency(depositAmount.value);
+
       processing.style.display = 'flex';
 
-      // simulate upload/process for 5s
       setTimeout(() => {
         processing.style.display = 'none';
+        successAmount.textContent = formattedAmount;
         success.style.display = 'flex';
       }, 5000);
     });
 
-    // accessibility: hide overlays from assistive until shown
     const observer = new MutationObserver(() => {
       processing.setAttribute('aria-hidden', processing.style.display === 'flex' ? 'false' : 'true');
       success.setAttribute('aria-hidden', success.style.display === 'flex' ? 'false' : 'true');
@@ -332,23 +364,13 @@
     observer.observe(processing, { attributes: true, attributeFilter: ['style'] });
     observer.observe(success, { attributes: true, attributeFilter: ['style'] });
 
-    // ensure overlays centered on resize (mobile UI bars)
-    window.addEventListener('resize', () => {
-      // no JS reposition necessary thanks to CSS 100dvh + flexbox
-      // leave hook here if you want additional handling later
-    });
-
-    // close button on success panel
     const closeBtn = document.getElementById('closeBtn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        // some browsers only allow closing windows opened by script
-        // try common workaround by navigating self to blank then closing
         try {
-          window.open('','_self');
+          window.open('', '_self');
           window.close();
         } catch (e) {
-          // fallback: hide overlays and notify user
           success.style.display = 'none';
           alert('Please close this tab manually.');
         }
