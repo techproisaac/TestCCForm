@@ -367,13 +367,39 @@
     const closeBtn = document.getElementById('closeBtn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        try {
-          window.open('', '_self');
+        // Attempt 1: standard close (works if window was opened by script, e.g. Comm100 push link)
+        window.close();
+
+        // Attempt 2: some browsers need a tiny delay before close takes effect
+        setTimeout(() => {
           window.close();
-        } catch (e) {
-          success.style.display = 'none';
-          alert('Please close this tab manually.');
-        }
+        }, 100);
+
+        // Attempt 3: try navigating to blank first, then closing (older browser workaround)
+        setTimeout(() => {
+          try {
+            window.open('about:blank', '_self');
+            window.close();
+          } catch(e) {}
+        }, 300);
+
+        // Fallback: if still open after 600ms, show a brief inline message instead of a disruptive alert
+        setTimeout(() => {
+          // Check if we're still alive — if so, window.close() was blocked
+          const btn = document.getElementById('closeBtn');
+          if (btn) {
+            const panel = btn.closest('.panel');
+            if (panel) {
+              panel.innerHTML = `
+                <div class="check" style="margin:0 auto 16px auto;">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.3 16.2 4.9 11.8 3.5 13.2l5.8 5.8 11-11L18.7 6z"/></svg>
+                </div>
+                <div class="big">All done!</div>
+                <div class="muted" style="margin-top:6px;">You may now close this window and return to the chat.</div>
+              `;
+            }
+          }
+        }, 700);
       });
     }
   </script>
